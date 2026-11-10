@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda Interactiva - Semana Técnica del Subsector de Informática 2026</title>
+<style>
+  :root {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --text-color: #f1f5f9;
+    --muted-color: #94a3b8;
+    --border-color: #334155;
+    --primary-color: #38bdf8;
+    --primary-hover: #0284c7;
+    --accent-color: #818cf8;
+    --accent-bg: rgba(129, 140, 248, 0.12);
+    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    --timeline-line: #334155;
+    --card-inner: #0f172a;
+  }
+
+  body.light-theme {
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-color: #0f172a;
+    --muted-color: #64748b;
+    --border-color: #e2e8f0;
+    --primary-color: #0284c7;
+    --primary-hover: #0369a1;
+    --accent-color: #4f46e5;
+    --accent-bg: rgba(79, 70, 229, 0.08);
+    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    --timeline-line: #cbd5e1;
+    --card-inner: #f1f5f9;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .header-actions {
+    width: 100%;
+    max-width: 850px;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+  }
+
+  .theme-toggle {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 10px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+  }
+
+  .container {
+    width: 100%;
+    max-width: 850px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 35px;
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s, border-color 0.3s;
+    position: relative;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--accent-bg);
+    color: var(--primary-color);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    border: 1px solid var(--primary-color);
+    letter-spacing: 0.5px;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+    line-height: 1.3;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    color: var(--muted-color);
+    margin-bottom: 25px;
+    font-weight: 600;
+  }
+
+  .welcome-card {
+    text-align: center;
+  }
+
+  .intro-box {
+    background: var(--card-inner);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 30px;
+    text-align: justify;
+    line-height: 1.7;
+    font-size: 1rem;
+  }
+
+  .intro-box strong {
+    color: var(--primary-color);
+  }
+
+  .btn {
+    background: var(--primary-color);
+    color: #ffffff;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+  }
+
+  .btn-secondary:hover {
+    background: var(--card-inner);
+    border-color: var(--primary-color);
+  }
+
+  .progress-container {
+    margin-bottom: 30px;
+  }
+
+  .progress-bar-bg {
+    background: var(--border-color);
+    border-radius: 10px;
+    height: 12px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  .stats-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--muted-color);
+    margin-top: 8px;
+    font-weight: 600;
+  }
+
+  .agenda-screen {
+    display: none;
+  }
+
+  .day-header {
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+  }
+
+  .day-title {
+    font-size: 1.6rem;
+    color: var(--primary-color);
+    font-weight: 700;
+  }
+
+  .motivational-card {
+    background: var(--accent-bg);
+    border-left: 4px solid var(--accent-color);
+    padding: 16px 20px;
+    border-radius: 0 12px 12px 0;
+    margin-bottom: 25px;
+    font-style: italic;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: var(--text-color);
+  }
+
+  .motivational-card strong {
+    font-style: normal;
+    color: var(--accent-color);
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 30px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 5px;
+    bottom: 5px;
+    width: 3px;
+    background: var(--timeline-line);
+    border-radius: 2px;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .timeline-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -30px;
+    top: 4px;
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 3px solid var(--primary-color);
+  }
+
+  .timeline-content {
+    background: var(--card-inner);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .time-badge {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+
+  .activity-title {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 25px;
+  }
+
+  .completion-screen {
+    display: none;
+    text-align: center;
+  }
+
+  .final-motivation {
+    background: var(--card-inner);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    margin: 25px 0;
+    text-align: justify;
+    line-height: 1.7;
+    font-size: 1rem;
+  }
+
+  .final-motivation strong {
+    color: var(--primary-color);
+  }
+</style>
+</head>
+<body>
+
+<div class="header-actions">
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+    ☀️ Modo Claro
+  </button>
+</div>
+
+<div class="container">
+  <!-- PANTALLA DE BIENVENIDA -->
+  <div id="welcomeScreen" class="welcome-card">
+    <span class="badge">Núcleo Sector Comercio y Servicios</span>
+    <h1>Semana Técnica del Subsector de Informática 2026</h1>
+    <h2>Instituto Nacional de Aprendizaje (INA)</h2>
+    
+    <div class="intro-box">
+      <p style="margin-bottom: 12px;"><strong>¡Estimadas y estimados docentes de Informática!</strong></p>
+      <p>Les damos la más cordial bienvenida a nuestra <strong>Semana Técnica 2026</strong>, un espacio diseñado especialmente para reencontrarnos, actualizar nuestros conocimientos y reflexionar sobre el impacto transformador de nuestra labor docente.</p>
+      <p style="margin-top: 12px;">A través de esta agenda interactiva podrán consultar día a día la programación de conferencias, talleres y actividades enfocadas en inteligencia artificial, evaluación por competencias, marco normativo y bienestar socioemocional.</p>
+    </div>
+
+    <button class="btn" onclick="startAgenda()">Iniciar Recorrido de la Agenda →</button>
+  </div>
+
+  <!-- PANTALLA DE AGENDA -->
+  <div id="agendaScreen" class="agenda-screen">
+    <div class="progress-container">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressBar"></div>
+      </div>
+      <div class="stats-row">
+        <span>Progreso de la Semana Técnica: <strong id="progressText">33%</strong></span>
+        <span>Día <span id="currentDayNum">1</span> de <span id="totalDaysNum">3</span></span>
+      </div>
+    </div>
+
+    <div class="day-header">
+      <div class="day-title" id="dayTitle">Miércoles 18 de noviembre 2026</div>
+    </div>
+
+    <div class="motivational-card">
+      <strong>💡 Reflexión para el Docente</strong>
+      <span id="motivationalText">Cargando mensaje...</span>
+    </div>
+
+    <div class="timeline" id="timelineContainer"></div>
+
+    <div class="actions-row">
+      <button class="btn btn-secondary" id="btnPrev" onclick="prevDay()">← Día Anterior</button>
+      <button class="btn" id="btnNext" onclick="nextDay()">Siguiente Día →</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA DE FINALIZACIÓN -->
+  <div id="completionScreen" class="completion-screen">
+    <span class="badge">Recorrido Completado - 100%</span>
+    <h1>¡Gracias por acompañarnos!</h1>
+    <h2>Subsector de Informática - INA 2026</h2>
+
+    <div class="final-motivation">
+      <p style="margin-bottom: 12px;"><strong>Mensaje Final de Trabajo Compartido:</strong></p>
+      <p>La tecnología avanza a un ritmo acelerado, pero el verdadero corazón de la educación sigue estando en las aulas y laboratorios a través de su guía, dedicación y pasión. Formar parte de esta bonita experiencia de trabajo compartido nos permite fortalecer nuestras capacidades para seguir inspirando a las personas estudiantes de Costa Rica.</p>
+      <p style="margin-top: 12px;">¡Les invitamos a vivir activamente cada una de estas jornadas, a colaborar con sus colegas y a construir juntos el futuro de la formación técnica en informática!</p>
+    </div>
+
+    <button class="btn" onclick="goToWelcome()">🏠 Volver al Inicio</button>
+  </div>
+</div>
+
+<script>
+const AGENDA_DATA = [
+  {
+    day: "Miércoles 18 de noviembre 2026",
+    motivation: "La tecnología transforma las herramientas, pero la docencia transforma la vida de las personas. Iniciar esta semana técnica con visión de innovación en Inteligencia Artificial nos invita a ser líderes del cambio en nuestras aulas.",
+    schedule: [
+      { time: "7:30", title: "Inicio - bienvenida" },
+      { time: "7:40", title: "Indicaciones generales" },
+      { time: "7:50", title: "Presentación de la agenda de los tres días" },
+      { time: "8:00", title: "Palabras de bienvenida jefatura del Núcleo" },
+      { time: "8:25", title: "Presentación de expositor Ricardo Aguirre" },
+      { time: "8:30", title: "Charla: «Inteligencia artificial aplicado a la labor docente – un aliado»" },
+      { time: "11:30", title: "Conclusiones – cierre" },
+      { time: "12:00", title: "Almuerzo" },
+      { time: "13:00", title: "Presentación expositora Diana Murillo Alpizar" },
+      { time: "13:10", title: "Charla Oficina de salud ocupacional" },
+      { time: "15:00", title: "Cierre" }
+    ]
+  },
+  {
+    day: "Jueves 19 de noviembre 2026",
+    motivation: "Evaluar por competencias implica reconocer el potencial único de cada estudiante y promover la excelencia técnica con equidad. Hoy consolidamos metodologías y normativas que respaldan la dignidad e integridad de nuestro entorno educativo.",
+    schedule: [
+      { time: "7:30", title: "Inicio" },
+      { time: "7:35", title: "Presentación de expositores Marvin Elizondo, Sonia Pérez y Mauricio Campos" },
+      { time: "7:40", title: "Exposición Evaluación por competencias" },
+      { time: "11:40", title: "Cierre – conclusiones" },
+      { time: "12:00", title: "Almuerzo" },
+      { time: "13:00", title: "Presentación expositor APIEG Mónica Valverde Núñez / Adriana Salas Arias" },
+      { time: "13:10", title: "Charla Marco Normativo sobre Hostigamiento Sexual" },
+      { time: "15:00", title: "Cierre" }
+    ]
+  },
+  {
+    day: "Viernes 20 de noviembre 2026",
+    motivation: "El verdadero liderazgo docente combina un saber técnico de excelencia con inteligencia emocional, valores humanos y autocuidado. Cerramos esta gran jornada recargando energías para continuar inspirando desde la vocación y el equilibrio personal.",
+    schedule: [
+      { time: "7:30", title: "Inicio" },
+      { time: "7:35", title: "Presentación expositor CIEV" },
+      { time: "7:40", title: "Charla Valores que trascienden (30 minutos)" },
+      { time: "8:15", title: "Presentación expositora Ivonne Ugalde" },
+      { time: "8:20", title: "Charla 12 competencias emocionales" },
+      { time: "12:00", title: "Almuerzo" },
+      { time: "13:00", title: "Presentación expositora Marianela Salazar" },
+      { time: "13:10", title: "Charla Actividades prácticas para el manejo del estrés" },
+      { time: "15:00", title: "Cierre" }
+    ]
+  }
+];
+
+let currentDayIndex = 0;
+
+function toggleTheme() {
+  document.body.classList.toggle('light-theme');
+  const btn = document.getElementById('themeBtn');
+  if (document.body.classList.contains('light-theme')) {
+    btn.innerHTML = '🌙 Modo Oscuro';
+  } else {
+    btn.innerHTML = '☀️ Modo Claro';
+  }
+}
+
+function startAgenda() {
+  document.getElementById('welcomeScreen').style.display = 'none';
+  document.getElementById('completionScreen').style.display = 'none';
+  document.getElementById('agendaScreen').style.display = 'block';
+  document.getElementById('totalDaysNum').textContent = AGENDA_DATA.length;
+  currentDayIndex = 0;
+  renderDay();
+}
+
+function renderDay() {
+  const dayData = AGENDA_DATA[currentDayIndex];
+
+  document.getElementById('dayTitle').textContent = dayData.day;
+  document.getElementById('motivationalText').textContent = dayData.motivation;
+  document.getElementById('currentDayNum').textContent = currentDayIndex + 1;
+
+  const progressPct = Math.round(((currentDayIndex + 1) / AGENDA_DATA.length) * 100);
+  document.getElementById('progressBar').style.width = progressPct + '%';
+  document.getElementById('progressText').textContent = progressPct + '%';
+
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+
+  if (currentDayIndex === 0) {
+    btnPrev.style.visibility = 'hidden';
+  } else {
+    btnPrev.style.visibility = 'visible';
+  }
+
+  if (currentDayIndex === AGENDA_DATA.length - 1) {
+    btnNext.textContent = 'Finalizar Recorrido ✓';
+  } else {
+    btnNext.textContent = 'Siguiente Día →';
+  }
+
+  const container = document.getElementById('timelineContainer');
+  container.innerHTML = '';
+
+  dayData.schedule.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'timeline-item';
+    el.innerHTML = `
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <span class="time-badge">⏰ ${item.time}</span>
+        <span class="activity-title">${item.title}</span>
+      </div>
+    `;
+    container.appendChild(el);
+  });
+}
+
+function nextDay() {
+  if (currentDayIndex < AGENDA_DATA.length - 1) {
+    currentDayIndex++;
+    renderDay();
+  } else {
+    showCompletion();
+  }
+}
+
+function prevDay() {
+  if (currentDayIndex > 0) {
+    currentDayIndex--;
+    renderDay();
+  }
+}
+
+function showCompletion() {
+  document.getElementById('agendaScreen').style.display = 'none';
+  document.getElementById('completionScreen').style.display = 'block';
+}
+
+function goToWelcome() {
+  document.getElementById('completionScreen').style.display = 'none';
+  document.getElementById('welcomeScreen').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
